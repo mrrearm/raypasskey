@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generatore di Password Sicure</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0a0a0a;
+      color: #00ffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header-banner {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 1rem 0;
+      color: #00ffff;
+      font-size: 2rem;
+    }
+
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    .result {
+      background: #111;
+      padding: 1rem;
+      border: 1px solid #00ffff55;
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      word-break: break-word;
+    }
+
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.2rem;
+      font-weight: bold;
+      background: #00ffff;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #00dddd;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .options label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 1rem;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Banner Header -->
+  <img class="header-banner" src="https://tecnicosoftware.netsons.org/wp-content/uploads/2025/05/passkey.webp" alt="Banner">
+
+  <div class="container">
+    <h1>Generatore di Password Sicure</h1>
+
+    <label for="length">Lunghezza: <span id="lengthDisplay">16</span></label>
+    <input type="range" id="length" min="6" max="64" value="16" />
+
+    <div class="options">
+      <label><input type="checkbox" id="uppercase" checked /> Maiuscole</label>
+      <label><input type="checkbox" id="lowercase" checked /> Minuscole</label>
+      <label><input type="checkbox" id="numbers" checked /> Numeri</label>
+      <label><input type="checkbox" id="symbols" /> Simboli</label>
+    </div>
+
+    <button onclick="generatePassword()">Genera Password</button>
+    <div class="result" id="passwordOutput">Clicca su "Genera Password"</div>
+    <button onclick="copyPassword()">Copia negli Appunti</button>
+  </div>
+
+  <script>
+    const lengthInput = document.getElementById("length");
+    const lengthDisplay = document.getElementById("lengthDisplay");
+    const output = document.getElementById("passwordOutput");
+
+    lengthInput.oninput = () => {
+      lengthDisplay.textContent = lengthInput.value;
+    };
+
+    function generatePassword() {
+      const length = parseInt(lengthInput.value);
+      const includeUpper = document.getElementById("uppercase").checked;
+      const includeLower = document.getElementById("lowercase").checked;
+      const includeNumbers = document.getElementById("numbers").checked;
+      const includeSymbols = document.getElementById("symbols").checked;
+
+      const upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const lower = "abcdefghijklmnopqrstuvwxyz";
+      const numbers = "0123456789";
+      const symbols = "!@#$%^&*()_+{}[]|:;<>?,./";
+
+      let chars = "";
+      if (includeUpper) chars += upper;
+      if (includeLower) chars += lower;
+      if (includeNumbers) chars += numbers;
+      if (includeSymbols) chars += symbols;
+
+      if (chars.length === 0) {
+        output.textContent = "Seleziona almeno un'opzione!";
+        return;
+      }
+
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        const index = Math.floor(Math.random() * chars.length);
+        password += chars[index];
+      }
+
+      output.textContent = password;
+    }
+
+    function copyPassword() {
+      const text = output.textContent;
+
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Password copiata!");
+      }).catch(() => {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+          document.execCommand("copy");
+          alert("Password copiata!");
+        } catch (err) {
+          alert("Copia non riuscita.");
+        }
+        document.body.removeChild(textarea);
+      });
+    }
+  </script>
+</body>
+</html>
